@@ -1,8 +1,9 @@
 package com.orgella.model;
 
+import com.orgella.model.factory.BidFactory;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,12 +35,13 @@ public class Auction {
     }
 
     public Auction(String title, BigDecimal price, int categoryId, String description, Person person) {
+        this.active = true;
         this.title = title;
         this.price = price;
         this.categoryId = categoryId;
         this.description = description;
         this.person = person;
-        this.bidList = new ArrayList<>();
+        this.bidList = BidFactory.createEmptyBidList();
     }
 
     public Auction(boolean active, String title, BigDecimal price, int categoryID, String description, Person person) {
@@ -121,18 +123,4 @@ public class Auction {
         this.bidList = bidList;
     }
 
-
-    @Override
-    public String toString() {
-        return "Auction{" +
-                "id=" + id +
-                ", active=" + active +
-                ", title='" + title + '\'' +
-                ", price=" + price +
-                ", categoryId=" + categoryId +
-                ", description='" + description + '\'' +
-                ", person=" + person +
-                ", bidList=" + bidList +
-                '}';
-    }
 }

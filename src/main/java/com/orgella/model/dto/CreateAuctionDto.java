@@ -1,10 +1,8 @@
 package com.orgella.model.dto;
 
-import com.orgella.model.Category;
-
 import java.math.BigDecimal;
 
-public class AuctionDto {
+public class CreateAuctionDto {
 
     private String title;
     private BigDecimal price;
@@ -12,10 +10,10 @@ public class AuctionDto {
     private String description;
     private String login;
 
-    public AuctionDto() {
+    public CreateAuctionDto() {
     }
 
-    public AuctionDto(String title, BigDecimal price, int category, String description, String login) {
+    public CreateAuctionDto(String title, BigDecimal price, int category, String description, String login) {
         this.title = title;
         this.price = price;
         this.category = category;

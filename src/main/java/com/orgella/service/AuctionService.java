@@ -3,23 +3,48 @@ package com.orgella.service;
 import com.orgella.model.Auction;
 import com.orgella.model.Bid;
 import com.orgella.model.Person;
+import com.orgella.model.dto.CreateAuctionDto;
+import com.orgella.model.factory.AuctionFactory;
 import com.orgella.repository.AuctionRepository;
 import com.orgella.repository.BidRepository;
+import com.orgella.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class AuctionService {
+public class AuctionService implements IAuctionService{
 
     @Autowired
     AuctionRepository auctionRepository;
 
     @Autowired
     BidRepository bidRepository;
+
+    @Autowired
+    PersonRepository personRepository;
+
+    @Override
+    public Optional<Auction> tryCreateAuction(CreateAuctionDto auctionDto) {
+
+        //sprawdzamy czy istnieje login
+        Optional<Person> personCreatingAuction = personRepository.findPersonByLogin(auctionDto.getLogin());
+
+        if(!personCreatingAuction.isPresent()){
+            return Optional.empty();
+        }
+
+        Auction createdAuction = AuctionFactory.create(auctionDto, personCreatingAuction.get());
+        createdAuction = auctionRepository.save(createdAuction);
+
+        return Optional.ofNullable(createdAuction);
+    }
+
 
     public List<Auction> getAllAuctions(){
         return auctionRepository.getAllBy();
@@ -117,4 +142,6 @@ public class AuctionService {
         auction.setActive(false);
         auctionRepository.save(auction);
     }
+
+
 }
