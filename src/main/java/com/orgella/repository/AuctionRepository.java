@@ -15,13 +15,13 @@ public interface AuctionRepository extends CrudRepository<Auction, Integer> {
 
     public List<Auction> getAllBy();
 
-    public List<Auction> findAuctionsByActiveIsTrue();
+    public Optional<List<Auction>> findAuctionsByActiveIsTrue();
 
     public List<Auction> findAuctionsByActiveIsFalse();
 
     public List<Auction> findAuctionsByActiveIsTrueAndPersonIsNot(Person person);
 
-    public Auction findAuctionById(Integer id);
+    public Optional<Auction> findAuctionById(Integer id);
 
     public List<Auction> findAllByPerson(Person person);
 

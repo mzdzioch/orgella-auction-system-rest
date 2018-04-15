@@ -3,6 +3,7 @@ package com.orgella.service;
 import com.orgella.model.Auction;
 import com.orgella.model.Bid;
 import com.orgella.model.Person;
+import com.orgella.model.dto.BidDto;
 import com.orgella.model.dto.CreateAuctionDto;
 import com.orgella.model.factory.AuctionFactory;
 import com.orgella.repository.AuctionRepository;
@@ -45,17 +46,22 @@ public class AuctionService implements IAuctionService{
         return Optional.ofNullable(createdAuction);
     }
 
+    @Override
+    public Optional<Bid> tryMakeBid(BidDto bidDto) {
+        return Optional.empty();
+    }
+
+
 
     public List<Auction> getAllAuctions(){
         return auctionRepository.getAllBy();
     }
 
-    public List<Auction> getAllAuctionsWithLatesPrice(){
-        List<Auction> tempList;
+    public Optional<List<Auction>> getAllAuctionsWithLatestPrice(){
 
-        tempList = auctionRepository.findAuctionsByActiveIsTrue();
+        Optional<List<Auction>> tempList = auctionRepository.findAuctionsByActiveIsTrue();
 
-        tempList.forEach(
+        tempList.get().forEach(
                 a -> a.setPrice(getLastPrice(a))
         );
 
@@ -86,7 +92,7 @@ public class AuctionService implements IAuctionService{
         return auctionRepository.findAllByPerson(person);
     }
 
-    public Auction getAuction(Integer id){
+    public Optional<Auction> getAuction(Integer id){
         return auctionRepository.findAuctionById(id);
     }
 

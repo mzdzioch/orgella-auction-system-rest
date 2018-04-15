@@ -135,7 +135,7 @@ public class AuctionController {
     public String getAuction(@PathVariable Integer id,
                              Model model){
 
-        Auction auction = auctionService.getAuction(id);
+        Auction auction = auctionService.getAuction(id).get();
         BigDecimal lastPrice = auctionService.getLastPrice(auction);
         Bid bid = new Bid();
 
@@ -151,7 +151,7 @@ public class AuctionController {
                            Model model){
 
 
-        Auction auction = auctionService.getAuction(id);
+        Auction auction = auctionService.getAuction(id).get();
         model.addAttribute("auction", auction);
 
         if(results.hasErrors()) {

@@ -79,17 +79,17 @@ public class AuctionsController {
         return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "No auction with this id.", null);
     }
 
-//    @RequestMapping(value = "/bid", method = RequestMethod.POST)
-//    public ResponseMessage<Bid> makeBid(@RequestBody BidDto bidDto){
-//        Optional<Bid> bid = auctionService.makeBid();
-//
-//        if(bid.isPresent()){
-//            return new ResponseMessage<>(StatusResponse.OK, null, bid.get());
-//        }
-//
-//        return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "", null);
-//
-//    }
+    @RequestMapping(value = "/bid", method = RequestMethod.POST)
+    public ResponseMessage<Bid> makeBid(@RequestBody BidDto bidDto){
+        Optional<Bid> bid = auctionService.tryMakeBid(bidDto);
+
+        if(bid.isPresent()){
+            return new ResponseMessage<>(StatusResponse.OK, null, bid.get());
+        }
+
+        return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "", null);
+
+    }
 
 
 
