@@ -47,8 +47,25 @@ public class AuctionService implements IAuctionService{
     }
 
     @Override
-    public Optional<Bid> tryMakeBid(BidDto bidDto) {
-        return Optional.empty();
+    public Optional<Bid> makeBid(Auction auction, BidDto bidDto) {
+
+        Bid bid = bidRepository.save(new Bid(bidDto.getBidPrice(), auction, auction.getPerson()));
+
+        return Optional.ofNullable(bid);
+    }
+
+    @Override
+    public boolean tryMakeBid(Auction auction, BigDecimal bidValue) {
+
+        List<Bid> bidList = new ArrayList<>();
+        bidList = getBidList(auction);
+
+        if(bidList.size() < 3) {
+            bidRepository.save(new Bid(bidValue, auction, auction.getPerson()));
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -80,7 +97,7 @@ public class AuctionService implements IAuctionService{
         return tempList;
     }
 
-    public List<Auction> getAllActiveAuctions(){
+    public Optional<List<Auction>> getAllActiveAuctions(){
         return auctionRepository.findAuctionsByActiveIsTrue();
     }
 
@@ -131,18 +148,7 @@ public class AuctionService implements IAuctionService{
         return false;
     }
 
-    public boolean makeBid(Auction auction, BigDecimal bidValue) {
 
-        List<Bid> bidList = new ArrayList<>();
-        bidList = getBidList(auction);
-
-        if(bidList.size() < 3) {
-            bidRepository.save(new Bid(bidValue, auction, auction.getPerson()));
-            return true;
-        }
-
-        return false;
-    }
 
     public void setAuctionFalse(Auction auction){
         auction.setActive(false);

@@ -2,11 +2,13 @@ package com.orgella.controller;
 
 import com.orgella.model.Auction;
 import com.orgella.model.Bid;
+import com.orgella.model.Person;
 import com.orgella.model.dto.BidDto;
 import com.orgella.model.dto.CreateAuctionDto;
 import com.orgella.model.response.ResponseMessage;
 import com.orgella.model.response.StatusResponse;
 import com.orgella.service.AuctionService;
+import com.orgella.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,9 @@ public class AuctionsController {
 
     @Autowired
     AuctionService auctionService;
+
+    @Autowired
+    PersonService personService;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ResponseMessage<Auction> addAuction(@RequestBody CreateAuctionDto auctionDto){
@@ -47,12 +52,12 @@ public class AuctionsController {
 
     @RequestMapping(value = "/getactive", method = RequestMethod.GET)
     public ResponseMessage<List<Auction>> getActiveAuctions(){
-        List<Auction> auctionList = auctionService.getAllActiveAuctions();
+        Optional<List<Auction>> auctionList = auctionService.getAllActiveAuctions();
 
         return new ResponseMessage<>(
                 StatusResponse.OK,
                 null,
-                auctionList
+                auctionList.get()
         );
     }
 
@@ -81,15 +86,25 @@ public class AuctionsController {
 
     @RequestMapping(value = "/bid", method = RequestMethod.POST)
     public ResponseMessage<Bid> makeBid(@RequestBody BidDto bidDto){
-        Optional<Bid> bid = auctionService.tryMakeBid(bidDto);
+
+        Optional<Auction> auction = auctionService.getAuction(bidDto.getAuctionId());
+        Person person = personService.findPersonByLogin(bidDto.getLogin());
+
+        if(auctionService.isBidHigher(auction.get(), bidDto.getBidPrice())){
+            return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "You bid is low than current price! Try again", null);
+        }
+
+        Optional<Bid> bid = auctionService.makeBid(auction.get(), bidDto);
 
         if(bid.isPresent()){
             return new ResponseMessage<>(StatusResponse.OK, null, bid.get());
         }
 
-        return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "", null);
+        return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "Make a bid again", null);
 
     }
+
+
 
 
 

@@ -6,7 +6,6 @@ import com.orgella.model.Person;
 import com.orgella.service.AuctionService;
 import com.orgella.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -161,7 +159,7 @@ public class AuctionController {
             if(!auctionService.isBidHigher(auction, bid.getBidPrice())){
                 model.addAttribute("message", "Your bid is lower than current price!");
             } else {
-                if(!auctionService.makeBid(auction, bid.getBidPrice())){
+                if(!auctionService.tryMakeBid(auction, bid.getBidPrice())){
                     auctionService.setAuctionFalse(auction);
                     model.addAttribute("message", "You have won!");
                     model.addAttribute("lastPrice", auctionService.getLastPrice(auction));

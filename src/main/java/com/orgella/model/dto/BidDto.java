@@ -4,33 +4,25 @@ import java.math.BigDecimal;
 
 public class BidDto {
 
-    private BigDecimal bid;
-    private String login;
+    private BigDecimal bidPrice;
     private Integer auctionId;
+    private String login;
 
     public BidDto() {
     }
 
-    public BidDto(BigDecimal bid, String login, Integer auctionId) {
-        this.bid = bid;
-        this.login = login;
+    public BidDto(BigDecimal bidPrice, Integer auctionId, String login) {
+        this.bidPrice = bidPrice;
         this.auctionId = auctionId;
-    }
-
-    public BigDecimal getBid() {
-        return bid;
-    }
-
-    public void setBid(BigDecimal bid) {
-        this.bid = bid;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
         this.login = login;
+    }
+
+    public BigDecimal getBidPrice() {
+        return bidPrice;
+    }
+
+    public void setBidPrice(BigDecimal bidPrice) {
+        this.bidPrice = bidPrice;
     }
 
     public Integer getAuctionId() {
@@ -39,5 +31,13 @@ public class BidDto {
 
     public void setAuctionId(Integer auctionId) {
         this.auctionId = auctionId;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 }
