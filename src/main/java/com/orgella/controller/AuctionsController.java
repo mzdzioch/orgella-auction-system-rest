@@ -12,7 +12,6 @@ import com.orgella.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,21 +37,45 @@ public class AuctionsController {
         return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "Failed to add auction.", null);
     }
 
-
-    @RequestMapping(value = "/getall", method = RequestMethod.GET)
-    public ResponseMessage<List<Auction>> getAuctions(){
-        List<Auction> auctionList = auctionService.getAllAuctions();
+    @RequestMapping(value = "/auctionlist", method = RequestMethod.GET)
+    public ResponseMessage<List<Auction>> getAuctionsList(){
+        Optional<List<Auction>> auctionList = auctionService.getAllAuctions();
 
         return new ResponseMessage<>(
                 StatusResponse.OK,
                 null,
-                auctionList
+                auctionList.get()
+        );
+    }
+
+
+    @RequestMapping(value = "/getall", method = RequestMethod.GET)
+    public ResponseMessage<List<Auction>> getAuctions(){
+        Optional<List<Auction>> auctionList = auctionService.getAllAuctionsWithLatestPrice();
+
+        return new ResponseMessage<>(
+                StatusResponse.OK,
+                null,
+                auctionList.get()
         );
     }
 
     @RequestMapping(value = "/getactive", method = RequestMethod.GET)
     public ResponseMessage<List<Auction>> getActiveAuctions(){
-        Optional<List<Auction>> auctionList = auctionService.getAllActiveAuctions();
+        Optional<List<Auction>> auctionList = auctionService.getAllActiveAuctionsWithLatestPrice();
+
+        return new ResponseMessage<>(
+                StatusResponse.OK,
+                null,
+                auctionList.get()
+        );
+    }
+
+
+    @RequestMapping(value = "/getactive", method = RequestMethod.GET)
+    public ResponseMessage<List<Auction>> getActiveAuctionsNotPerson(@RequestBody String login){
+        Optional<Person> person = personService.findPersonByLogin(login);
+        Optional<List<Auction>> auctionList = auctionService.getAllAuctionsWithLatestPriceAndPersonIsNot(person.get());
 
         return new ResponseMessage<>(
                 StatusResponse.OK,
@@ -63,18 +86,17 @@ public class AuctionsController {
 
     @RequestMapping(value = "/getinactive", method = RequestMethod.GET)
     public ResponseMessage<List<Auction>> getInactiveAuctions(){
-        List<Auction> auctionList = auctionService.getAllInactiveAuctions();
+        Optional<List<Auction>> auctionList = auctionService.getAllInactiveAuctionsWithLatestPrice();
 
         return new ResponseMessage<>(
                 StatusResponse.OK,
                 null,
-                auctionList
+                auctionList.get()
         );
     }
 
-
     @RequestMapping(value = "/getauction/{id}", method = RequestMethod.GET)
-    public ResponseMessage<Auction> getAuction(@PathParam("id") Integer id){
+    public ResponseMessage<Auction> getAuction(@PathVariable("id") Integer id){
         Optional<Auction> auction = auctionService.getAuction(id);
 
         if(auction.isPresent()){
@@ -88,10 +110,9 @@ public class AuctionsController {
     public ResponseMessage<Bid> makeBid(@RequestBody BidDto bidDto){
 
         Optional<Auction> auction = auctionService.getAuction(bidDto.getAuctionId());
-        Person person = personService.findPersonByLogin(bidDto.getLogin());
 
-        if(auctionService.isBidHigher(auction.get(), bidDto.getBidPrice())){
-            return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "You bid is low than current price! Try again", null);
+        if(!auctionService.isBidHigher(auction.get(), bidDto.getBidPrice())){
+            return new ResponseMessage<>(StatusResponse.LOW_BID, "You bid is low than current price! Try again", null);
         }
 
         Optional<Bid> bid = auctionService.makeBid(auction.get(), bidDto);
@@ -100,7 +121,7 @@ public class AuctionsController {
             return new ResponseMessage<>(StatusResponse.OK, null, bid.get());
         }
 
-        return new ResponseMessage<>(StatusResponse.REQUEST_ERROR, "Make a bid again", null);
+        return new ResponseMessage<>(StatusResponse.UNSUCCESSFUL, "Make a bid again", null);
 
     }
 

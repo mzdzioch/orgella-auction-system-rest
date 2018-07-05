@@ -12,11 +12,25 @@ import java.util.Optional;
 
 public interface IAuctionService {
 
+    Auction saveAuction(Auction auction);
+
     Optional<Auction> tryCreateAuction(CreateAuctionDto auctionDto);
 
     Optional<Bid> makeBid(Auction auction, BidDto bidDto);
 
     boolean tryMakeBid(Auction auction, BigDecimal bidValue);
 
+    Optional<List<Auction>> getAllAuctions();
+
     Optional<List<Auction>> getAllAuctionsWithLatestPrice();
+
+    Optional<List<Auction>> getAllActiveAuctionsWithLatestPrice();
+
+    Optional<List<Auction>> getAllInactiveAuctionsWithLatestPrice();
+
+    Optional<List<Auction>> getAllAuctionsWithLatestPriceAndPersonIsNot(Person person);
+
+    Optional<List<Auction>> findAllAuctionsByPerson(Person person);
+
+    Optional<Auction> getAuction(Integer id);
 }

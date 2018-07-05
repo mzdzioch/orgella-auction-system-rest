@@ -34,18 +34,18 @@ public class PersonService implements IPersonService{
 
     public boolean isLoginAndPasswordCorrect(Person person) {
 
-        Person findPerson = findPersonByLogin(person.getLogin());
+        Optional<Person> findPerson = findPersonByLogin(person.getLogin());
 
         if (findPerson == null) {
             return false;
-        } else if (findPerson.getPassword().equals(person.getPassword())) {
+        } else if (findPerson.get().getPassword().equals(person.getPassword())) {
             return true;
         }
 
         return false;
     }
 
-    public Person findPersonByLogin(String login) {
+    public Optional<Person> findPersonByLogin(String login) {
 
         return personRepository.findPersonByLogin(login);
     }
@@ -59,7 +59,7 @@ public class PersonService implements IPersonService{
     @Override
     public Optional<Person> tryRegister(PersonDto personDto) {
 
-        Person person = personRepository.findPersonByLogin(personDto.getLogin());
+        Optional<Person> person = personRepository.findPersonByLogin(personDto.getLogin());
 
         if(person != null){
             return Optional.empty();

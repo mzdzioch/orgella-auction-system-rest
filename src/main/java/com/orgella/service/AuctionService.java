@@ -12,7 +12,6 @@ import com.orgella.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +28,12 @@ public class AuctionService implements IAuctionService{
 
     @Autowired
     PersonRepository personRepository;
+
+    @Override
+    public Auction saveAuction(Auction auction){
+        return auctionRepository.save(auction);
+    }
+
 
     @Override
     public Optional<Auction> tryCreateAuction(CreateAuctionDto auctionDto) {
@@ -57,8 +62,7 @@ public class AuctionService implements IAuctionService{
     @Override
     public boolean tryMakeBid(Auction auction, BigDecimal bidValue) {
 
-        List<Bid> bidList = new ArrayList<>();
-        bidList = getBidList(auction);
+        List<Bid> bidList = getBidList(auction);
 
         if(bidList.size() < 3) {
             bidRepository.save(new Bid(bidValue, auction, auction.getPerson()));
@@ -68,13 +72,25 @@ public class AuctionService implements IAuctionService{
         return false;
     }
 
-
-
-    public List<Auction> getAllAuctions(){
+    @Override
+    public Optional<List<Auction>> getAllAuctions(){
         return auctionRepository.getAllBy();
     }
 
+    @Override
     public Optional<List<Auction>> getAllAuctionsWithLatestPrice(){
+
+        Optional<List<Auction>> tempList = auctionRepository.getAllBy();
+
+        tempList.get().forEach(
+                a -> a.setPrice(getLastPrice(a))
+        );
+
+        return tempList;
+    }
+
+    @Override
+    public Optional<List<Auction>> getAllActiveAuctionsWithLatestPrice(){
 
         Optional<List<Auction>> tempList = auctionRepository.findAuctionsByActiveIsTrue();
 
@@ -85,57 +101,54 @@ public class AuctionService implements IAuctionService{
         return tempList;
     }
 
-    public List<Auction> getAllAuctionsWithLatesPriceAndPersonIsNot(Person person){
-        List<Auction> tempList;
+    @Override
+    public Optional<List<Auction>> getAllInactiveAuctionsWithLatestPrice(){
 
-        tempList = auctionRepository.findAuctionsByActiveIsTrueAndPersonIsNot(person);
+        Optional<List<Auction>> tempList = auctionRepository.findAuctionsByActiveIsFalse();
 
-        tempList.forEach(
+        tempList.get().forEach(
                 a -> a.setPrice(getLastPrice(a))
         );
 
         return tempList;
     }
 
-    public Optional<List<Auction>> getAllActiveAuctions(){
-        return auctionRepository.findAuctionsByActiveIsTrue();
+    @Override
+    public Optional<List<Auction>> getAllAuctionsWithLatestPriceAndPersonIsNot(Person person){
+
+        Optional<List<Auction>> tempList = auctionRepository.findAuctionsByActiveIsTrueAndPersonIsNot(person);
+
+        tempList.get().forEach(
+                a -> a.setPrice(getLastPrice(a))
+        );
+
+        return tempList;
     }
 
-    public List<Auction> getAllInactiveAuctions(){
-        return auctionRepository.findAuctionsByActiveIsFalse();
+
+    @Override
+    public Optional<List<Auction>> findAllAuctionsByPerson(Person person){
+
+        Optional<List<Auction>> tempList = auctionRepository.findAllByPerson(person);
+
+        tempList.get().forEach(
+                a -> a.setPrice(getLastPrice(a))
+        );
+
+        return tempList;
     }
 
-    public List<Auction> findAllAuctionsByPerson(Person person){
-        return auctionRepository.findAllByPerson(person);
-    }
-
+    @Override
     public Optional<Auction> getAuction(Integer id){
-        return auctionRepository.findAuctionById(id);
+        Optional<Auction> auction = auctionRepository.findAuctionById(id);
+        auction.get().setPrice(getLastPrice(auction.get()));
+        return auction;
     }
 
-    public Auction saveAuction(Auction auction){
-        return auctionRepository.save(auction);
-    }
-
-    public List<Bid> getBidList(Auction auction){
-        return bidRepository.findAllByAuction(auction);
-    }
-
-
-    public BigDecimal getLastPrice(Auction auction){
-        List<Bid> bidList = new ArrayList<>();
-        bidList = getBidList(auction);
-
-        if(bidList.isEmpty())
-            return auction.getPrice();
-
-        return bidList.get(bidList.size()-1).getBidPrice();
-    }
 
     public boolean isBidHigher(Auction auction, BigDecimal bidValue) {
 
-        List<Bid> bidList = new ArrayList<>();
-        bidList = getBidList(auction);
+        List<Bid> bidList = getBidList(auction);
 
         if(!bidList.isEmpty()) {
             if(bidValue.compareTo(bidList.get(bidList.size() - 1).getBidPrice()) == 1) {
@@ -148,12 +161,24 @@ public class AuctionService implements IAuctionService{
         return false;
     }
 
+    private List<Bid> getBidList(Auction auction){
+        return bidRepository.findAllByAuction(auction);
+    }
 
 
-    public void setAuctionFalse(Auction auction){
+    private BigDecimal getLastPrice(Auction auction){
+        List<Bid> bidList = getBidList(auction);
+
+        if(bidList.isEmpty())
+            return auction.getPrice();
+
+        return bidList.get(bidList.size()-1).getBidPrice();
+    }
+
+
+    private void setAuctionFalse(Auction auction){
         auction.setActive(false);
         auctionRepository.save(auction);
     }
-
 
 }

@@ -35,17 +35,17 @@ public class AuctionServiceTest {
     @Before
     public void setUp() throws Exception {
         //boolean active, String title, BigDecimal price, int categoryID, String description, Person person
-        auctionService.saveAuction(new Auction(true, "Nowy laptop", new BigDecimal(20), 4, "Sprzedam nowy laptop", personService.findPersonByLogin("misiek")));
-        auctionService.saveAuction(new Auction(true, "Apple nowy", new BigDecimal(40), 4, "Mam nowy laptop apple", personService.findPersonByLogin("jacek")));
-        auctionService.saveAuction(new Auction(true, "Opel Adam", new BigDecimal(120), 13, "Sprzedam opla. Nowy. Nieuzywany", personService.findPersonByLogin("michal")));
-        auctionService.saveAuction(new Auction(true, "Opel Astra", new BigDecimal(200), 13, "Sprzedam nowy samochod", personService.findPersonByLogin("misiek")));
-        auctionService.saveAuction(new Auction(false, "Opel Astra", new BigDecimal(200), 13, "Sprzedam nowy samochod", personService.findPersonByLogin("jacek")));
+        auctionService.saveAuction(new Auction(true, "Nowy laptop", new BigDecimal(20), 4, "Sprzedam nowy laptop", personService.findPersonByLogin("misiek").get()));
+        auctionService.saveAuction(new Auction(true, "Apple nowy", new BigDecimal(40), 4, "Mam nowy laptop apple", personService.findPersonByLogin("jacek").get()));
+        auctionService.saveAuction(new Auction(true, "Opel Adam", new BigDecimal(120), 13, "Sprzedam opla. Nowy. Nieuzywany", personService.findPersonByLogin("michal").get()));
+        auctionService.saveAuction(new Auction(true, "Opel Astra", new BigDecimal(200), 13, "Sprzedam nowy samochod", personService.findPersonByLogin("misiek").get()));
+        auctionService.saveAuction(new Auction(false, "Opel Astra", new BigDecimal(200), 13, "Sprzedam nowy samochod", personService.findPersonByLogin("jacek").get()));
     }
 
     @Test
     public void shouldGetAllAuctions() throws Exception {
         List<Auction> auctions = new ArrayList<>();
-        auctions = auctionService.getAllActiveAuctions();
+        auctions = auctionService.getAllActiveAuctions().get();
 
         Assert.notEmpty(auctions);
 
@@ -55,7 +55,7 @@ public class AuctionServiceTest {
     public void shouldReturnTrueIfGetAllFourActiveAuctions() throws Exception {
 
         List<Auction> auctions = new ArrayList<>();
-        auctions = auctionService.getAllActiveAuctions();
+        auctions = auctionService.getAllActiveAuctions().get();
 
         assertTrue(auctions.size() == 4);
     }
@@ -63,7 +63,7 @@ public class AuctionServiceTest {
     @Test
     public void shouldReturnTrueIfGetOneInactiveAuctinon() throws Exception {
         List<Auction> auctions = new ArrayList<>();
-        auctions = auctionService.getAllInactiveAuctions();
+        auctions = auctionService.getAllInactiveAuctionsWithLatestPrice();
 
         assertTrue(auctions.size() == 1);
     }
@@ -71,7 +71,7 @@ public class AuctionServiceTest {
     @Test
     public void shouldReturnTrueIfAuctionIsSaved() throws Exception {
 
-        Auction auction = auctionService.saveAuction(new Auction(true, "Nowy PC", new BigDecimal(21), 5, "Sprzedam nowy PC", personService.findPersonByLogin("misiek")));
+        Auction auction = auctionService.saveAuction(new Auction(true, "Nowy PC", new BigDecimal(21), 5, "Sprzedam nowy PC", personService.findPersonByLogin("misiek").get()));
 
         assertNotNull(auction);
 
@@ -80,7 +80,7 @@ public class AuctionServiceTest {
     @Test
     public void shouldReturnTrueIfReceiveLastPriceAsOriginalPrice() throws Exception {
         List<Auction> auctionList = new ArrayList<>();
-        auctionList = auctionService.getAllActiveAuctions();
+        auctionList = auctionService.getAllActiveAuctions().get();
 
         assertTrue(auctionService.getLastPrice(auctionList.get(0)).equals(new BigDecimal(20)));
     }
@@ -90,7 +90,7 @@ public class AuctionServiceTest {
 
         List<Auction> auctionList = new ArrayList<>();
         List<Bid> bidList = new ArrayList<>();
-        auctionList = auctionService.getAllActiveAuctions();
+        auctionList = auctionService.getAllActiveAuctions().get();
         Bid bid = new Bid(new BigDecimal(21), auctionList.get(0), auctionList.get(0).getPerson());
 
         bidList.add(bid);
@@ -105,14 +105,14 @@ public class AuctionServiceTest {
     @Test
     public void shouldReturnTrueIfBidIsHigherThan() throws Exception {
 
-        Auction auction = auctionService.getAuction(1);
+        Auction auction = auctionService.getAuction(1).get();
 
         assertTrue(auctionService.isBidHigher(auction, new BigDecimal(21)));
     }
 
     @Test
     public void shouldReturnNullForListBids() throws Exception {
-        Auction auction2 = auctionService.getAuction(2);
+        Auction auction2 = auctionService.getAuction(2).get();
         List<Bid> bidList = auctionService.getBidList(auction2);
 
         assertNull(bidList);

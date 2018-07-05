@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 //import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @RunWith(SpringRunner.class)
@@ -35,13 +36,13 @@ public class PersonServiceTest {
 
     @Test
     public void shouldReturnNotNullIfFindUser(){
-        Person personTest = personService.findPersonByLogin("misiek");
+        Optional<Person> personTest = personService.findPersonByLogin("misiek");
         Assert.assertNotNull(personTest);
     }
 
     @Test
     public void shouldReturnNullIfFindUser(){
-        Person personTest = personService.findPersonByLogin("misiekk");
+        Optional<Person> personTest = personService.findPersonByLogin("misiekk");
         Assert.assertNull(personTest);
     }
 
@@ -81,9 +82,9 @@ public class PersonServiceTest {
     @Test
     public void shouldReturnNullIfUserRemovedCorrectly(){
 
-        Person person = personService.findPersonByLogin("misiek");
-        personService.deletePerson(person);
-        Person personTest = personService.findPersonByLogin("misiek");
+        Optional<Person> person = personService.findPersonByLogin("misiek");
+        personService.deletePerson(person.get());
+        Optional<Person> personTest = personService.findPersonByLogin("misiek");
         Assert.assertNull(personTest);
     }
 

@@ -13,19 +13,19 @@ import java.util.Optional;
 @Repository
 public interface AuctionRepository extends CrudRepository<Auction, Integer> {
 
-    public List<Auction> getAllBy();
+    Optional<List<Auction>> getAllBy();
 
-    public Optional<List<Auction>> findAuctionsByActiveIsTrue();
+    Optional<List<Auction>> findAuctionsByActiveIsTrue();
 
-    public List<Auction> findAuctionsByActiveIsFalse();
+    Optional<List<Auction>> findAuctionsByActiveIsFalse();
 
-    public List<Auction> findAuctionsByActiveIsTrueAndPersonIsNot(Person person);
+    Optional<List<Auction>> findAuctionsByActiveIsTrueAndPersonIsNot(Person person);
 
-    public Optional<Auction> findAuctionById(Integer id);
+    Optional<Auction> findAuctionById(Integer id);
 
-    public List<Auction> findAllByPerson(Person person);
+    Optional<List<Auction>> findAllByPerson(Person person);
 
-    public List<Auction> findAllByCategoryId(Integer categoryId);
+    List<Auction> findAllByCategoryId(Integer categoryId);
 
 
 }
