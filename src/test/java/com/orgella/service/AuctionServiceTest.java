@@ -110,7 +110,7 @@ public class AuctionServiceTest {
     @Test
     public void shouldReturnNullForListBids() throws Exception {
         Auction auction2 = auctionService.getAuction(2).get();
-        List<Bid> bidList = auctionService.getBidList(auction2);
+        List<Bid> bidList = auctionService.getBidList(auction2).get();
 
         assertNull(bidList);
     }
@@ -118,7 +118,7 @@ public class AuctionServiceTest {
     @Test
     public void shouldReturnForListBids() throws Exception {
 
-        List<Bid> bidList = auctionService.getBidList(null);
+        List<Bid> bidList = auctionService.getBidList(null).get();
 
         assertNull(bidList);
     }
