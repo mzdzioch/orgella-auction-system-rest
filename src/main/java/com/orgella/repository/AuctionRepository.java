@@ -25,7 +25,7 @@ public interface AuctionRepository extends CrudRepository<Auction, Integer> {
 
     Optional<List<Auction>> findAllByPerson(Person person);
 
-    List<Auction> findAllByCategoryId(Integer categoryId);
+    Optional<List<Auction>> findAllByCategoryId(Integer categoryId);
 
 
 }

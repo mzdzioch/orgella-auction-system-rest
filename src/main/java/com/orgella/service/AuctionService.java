@@ -20,6 +20,8 @@ import java.util.Optional;
 @Service
 public class AuctionService implements IAuctionService{
 
+    public static final int MAX_NUMBER_OF_BIDS = 3;
+
     @Autowired
     AuctionRepository auctionRepository;
 
@@ -38,7 +40,7 @@ public class AuctionService implements IAuctionService{
     @Override
     public Optional<Auction> tryCreateAuction(CreateAuctionDto auctionDto) {
 
-        //sprawdzamy czy istnieje login
+        //check if login exists
         Optional<Person> personCreatingAuction = personRepository.findPersonByLogin(auctionDto.getLogin());
 
         if(!personCreatingAuction.isPresent()){
@@ -52,24 +54,18 @@ public class AuctionService implements IAuctionService{
     }
 
     @Override
-    public Optional<Bid> makeBid(Auction auction, BidDto bidDto) {
+    public boolean tryMakeWinningBid(Auction auction, BidDto bidDto) {
 
-        Bid bid = bidRepository.save(new Bid(bidDto.getBidPrice(), auction, auction.getPerson()));
+        List<Bid> bidList = getBidList(auction).get();
 
-        return Optional.ofNullable(bid);
-    }
-
-    @Override
-    public boolean tryMakeBid(Auction auction, BigDecimal bidValue) {
-
-        List<Bid> bidList = getBidList(auction);
-
-        if(bidList.size() < 3) {
-            bidRepository.save(new Bid(bidValue, auction, auction.getPerson()));
+        if(bidList.size() < MAX_NUMBER_OF_BIDS) {
+            bidRepository.save(new Bid(bidDto.getBidPrice(), auction, auction.getPerson()));
+            return false;
+        } else if(bidList.size() == MAX_NUMBER_OF_BIDS) {
+            bidRepository.save(new Bid(bidDto.getBidPrice(), auction, auction.getPerson()));
+            setAuctionFalse(auction);
             return true;
-        }
-
-        return false;
+        } else return false;
     }
 
     @Override
@@ -145,10 +141,10 @@ public class AuctionService implements IAuctionService{
         return auction;
     }
 
-
+    @Override
     public boolean isBidHigher(Auction auction, BigDecimal bidValue) {
 
-        List<Bid> bidList = getBidList(auction);
+        List<Bid> bidList = getBidList(auction).get();
 
         if(!bidList.isEmpty()) {
             if(bidValue.compareTo(bidList.get(bidList.size() - 1).getBidPrice()) == 1) {
@@ -161,18 +157,18 @@ public class AuctionService implements IAuctionService{
         return false;
     }
 
-    private List<Bid> getBidList(Auction auction){
+    public Optional<List<Bid>> getBidList(Auction auction){
         return bidRepository.findAllByAuction(auction);
     }
 
 
     private BigDecimal getLastPrice(Auction auction){
-        List<Bid> bidList = getBidList(auction);
+        List<Bid> bidList = getBidList(auction).get();
 
         if(bidList.isEmpty())
             return auction.getPrice();
 
-        return bidList.get(bidList.size()-1).getBidPrice();
+        return bidList.get(bidList.size() - 1).getBidPrice();
     }
 
 

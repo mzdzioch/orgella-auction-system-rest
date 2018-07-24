@@ -7,18 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-public class BidService {
+public class BidService implements IBidService{
 
     @Autowired
     BidRepository bidRepository;
 
-    Bid saveBid(Bid bid){
+    @Override
+    public Bid saveBid(Bid bid) {
         return bidRepository.save(bid);
     }
 
-    List<Bid> findAllByAuction(Auction auction){
+    @Override
+    public Optional<List<Bid>> findAllByAuction(Auction auction) {
         return bidRepository.findAllByAuction(auction);
     }
 }

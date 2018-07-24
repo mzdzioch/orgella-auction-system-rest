@@ -7,10 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BidRepository extends CrudRepository<Bid, Integer> {
 
-    List<Bid> findAllByAuction(Auction auction);
+    Optional<List<Bid>> findAllByAuction(Auction auction);
 
 }

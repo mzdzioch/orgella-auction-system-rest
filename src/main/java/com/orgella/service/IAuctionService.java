@@ -16,9 +16,7 @@ public interface IAuctionService {
 
     Optional<Auction> tryCreateAuction(CreateAuctionDto auctionDto);
 
-    Optional<Bid> makeBid(Auction auction, BidDto bidDto);
-
-    boolean tryMakeBid(Auction auction, BigDecimal bidValue);
+    boolean tryMakeWinningBid(Auction auction, BidDto bidDto);
 
     Optional<List<Auction>> getAllAuctions();
 
@@ -33,4 +31,6 @@ public interface IAuctionService {
     Optional<List<Auction>> findAllAuctionsByPerson(Person person);
 
     Optional<Auction> getAuction(Integer id);
+
+    boolean isBidHigher(Auction auction, BigDecimal bidValue);
 }
