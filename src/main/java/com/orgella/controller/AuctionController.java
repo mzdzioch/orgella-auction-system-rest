@@ -72,8 +72,8 @@ public class AuctionController {
     }
 
 
-    @RequestMapping(value = "/getactive", method = RequestMethod.GET)
-    public ResponseMessage<List<Auction>> getActiveAuctionsNotPerson(@RequestBody String login){
+    @RequestMapping(value = "/getactive/{login}", method = RequestMethod.GET)
+    public ResponseMessage<List<Auction>> getActiveAuctionsNotPerson(@RequestParam String login){
         Optional<Person> person = personService.findPersonByLogin(login);
         Optional<List<Auction>> auctionList = auctionService.getAllAuctionsWithLatestPriceAndPersonIsNot(person.get());
 

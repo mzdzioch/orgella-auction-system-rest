@@ -1,54 +1,68 @@
 package com.orgella.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Category {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
-    private String name;
+    private String categoryName;
 
-    private Integer parentId;
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    @JsonIgnore
+    private Category parent;
+
+    //@JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.REMOVE}, mappedBy = "parent") //(fetch = FetchType.EAGER, mappedBy = "parent", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Category> children = new ArrayList<>();
 
     public Category() {
     }
 
-    public Category(String name, Integer parentId) {
-        this.parentId = parentId;
-        this.name = name;
+    public Category(String categoryName, Category parent) {
+        this.categoryName = categoryName;
+        this.parent = parent;
     }
 
-    public Integer getIdCategory() {
+    public Long getId() {
         return id;
     }
 
-    public Integer getParentId() {
-        return parentId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public String getName() {
-        return name;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Category getParent() {
+        return parent;
     }
 
-    @Override
-    public String toString() {
-        return "Category{" +
-                "id=" + id +
-                ", parentId=" + parentId +
-                ", name='" + name + '\'' +
-                '}';
+    public void setParent(Category parent) {
+        this.parent = parent;
     }
+
+    public List<Category> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Category> children) {
+        this.children = children;
+    }
+
+
 }

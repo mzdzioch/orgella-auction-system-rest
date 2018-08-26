@@ -1,8 +1,7 @@
 package com.orgella.service;
 
 import com.orgella.model.Category;
-import com.orgella.repository.CategoryRepository;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
+import java.util.*;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
@@ -18,64 +19,86 @@ public class CategoryServiceTest {
     @Autowired
     CategoryService categoryService;
 
-    @Before
-    public void setUp() throws Exception {
+    @Test
+    public void shouldReturnedSavedCategory(){
+        Optional<Category> optionalCategory = categoryService.findCategoryByName("Motors");
 
-        categoryService.save(new Category("Electronics", 0));
+        if(optionalCategory.isPresent()){
+            Category category = categoryService.save(new Category("Bus", optionalCategory.get()));
+            Assert.assertNotNull(category);
+        }
+    }
 
-        categoryService.save(new Category("Motors", 0));
-        categoryService.save(new Category("Clothes", 0));
+//    @Test //TODO
+//    public void shouldReturnedSavedCategoryAsChildrenForItsParent(){
+//        Optional<Category> optionalCategory = categoryService.findCategoryByName("Motors");
+//
+//        if(optionalCategory.isPresent()){
+//            Category expectedCategory = categoryService.save(new Category("Bus", optionalCategory.get()));
+//
+//            Optional<Category> parentOptional = categoryService.findCategoryByName("Motors");
+//
+//            if(parentOptional.isPresent()){
+//                for (Category category : parentOptional.get().getChildren()) {
+//                    System.out.println(category.getCategoryName());
+//                }
+//                Assert.assertEquals(expectedCategory, parentOptional.get().getChildren().contains(expectedCategory));
+//            }
+//        }
+//    }
 
-        categoryService.save(new Category("Laptops", 1));
-        categoryService.save(new Category("PC", 1));
-        categoryService.save(new Category("Servers", 1));
-        //adding subcategories for Motors category
-        categoryService.save(new Category("Parts", 2));
-        categoryService.save(new Category("Cars", 2));
-        categoryService.save(new Category("Vehicles", 2));
-        categoryService.save(new Category("Trucks", 2));
-        //adding subcategories for Clothes category
-        categoryService.save(new Category("Women Clothing", 3));
-        categoryService.save(new Category("Men Clothing", 3));
-        categoryService.save(new Category("Shoes", 3));
+    @Test
+    public void shouldReturnFalseIfCategoryAndItsChildrenAreDelete(){
+        Optional<Category> optionalCategory = categoryService.findCategoryByName("Motors");
+
+        if(optionalCategory.isPresent()){
+            categoryService.delete(optionalCategory.get());
+        }
+
+        Optional<Category> result = categoryService.findCategoryByName("Motors");
+        Assert.assertFalse(result.isPresent());
     }
 
     @Test
-    public void createCategory() {
-        categoryService.createCategory().getChildren().stream().forEach(p -> System.out.printf(p.getItem().getName()));
+    public void shouldReturnListOfRootCategories() {
 
+        Optional<List<Category>> root = categoryService.findAllRootCategory();
 
+        if(root.isPresent()){
+            for (Category category : root.get()) {
+                Assert.assertTrue(category.getCategoryName().equals("ROOT"));
+            }
+        }
     }
 
     @Test
-    public void findAllBy() {
+    public void shouldReturnCategoryFindByCategoryName(){
+
+        Optional<Category> category = categoryService.findCategoryByName("Parts");
+
+        if(category.isPresent()){
+            Assert.assertTrue(category.get().getCategoryName().equals("Parts"));
+        }
     }
 
     @Test
-    public void findCategoriesByParentId() {
+    public void shouldReturnFalseForCategoryWhichDoesNotExist(){
+
+        Optional<Category> category = categoryService.findCategoryByName("Part");
+
+        Assert.assertFalse(category.isPresent());
     }
 
     @Test
-    public void findCategoryById() {
+    public void shouldReturnTrueIfCategoryExist() {
+
+        Assert.assertTrue(categoryService.isCategoryExist("Motors"));
     }
 
     @Test
-    public void isParentExist() {
+    public void shouldReturnFalseIfCategoryExist() {
+
+        Assert.assertFalse(categoryService.isCategoryExist("Motor"));
     }
 
-    @Test
-    public void getBuilder() {
-    }
-
-    @Test
-    public void addCategory() {
-    }
-
-    @Test
-    public void getCategoryAndSubcategoriesListId() {
-    }
-
-    @Test
-    public void getRootCategories() {
-    }
 }
