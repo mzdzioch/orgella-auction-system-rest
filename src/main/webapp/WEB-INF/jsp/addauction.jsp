@@ -130,9 +130,9 @@
 								<div class="form-group">
 									<label for="categoryInput" class="col-lg-3 control-label">Category Name</label>
 									<div class="col-lg-9">
-										<form:input type="text" class="form-control" path="categoryId"
+										<form:input type="text" class="form-control" path="categoryName"
 											id="categoryInput" placeholder="Category" />
-										<form:errors path="categoryId" cssClass="error" />
+										<form:errors path="categoryName" cssClass="error" />
 									</div>
 								</div>
 

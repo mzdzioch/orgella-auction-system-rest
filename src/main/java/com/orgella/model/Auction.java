@@ -21,7 +21,7 @@ public class Auction {
 
     private BigDecimal price;
 
-    private int categoryId;
+    private String categoryName;
 
     private String description;
 
@@ -34,34 +34,16 @@ public class Auction {
     public Auction() {
     }
 
-    public Auction(String title, BigDecimal price, int categoryId, String description, Person person) {
+    public Auction(String title, BigDecimal price, String categoryName, String description, Person person) {
         this.active = true;
         this.title = title;
         this.price = price;
-        this.categoryId = categoryId;
+        this.categoryName = categoryName;
         this.description = description;
         this.person = person;
         this.bidList = BidFactory.createEmptyBidList();
     }
 
-    public Auction(boolean active, String title, BigDecimal price, int categoryID, String description, Person person) {
-        this.active = active;
-        this.title = title;
-        this.price = price;
-        this.categoryId = categoryID;
-        this.description = description;
-        this.person = person;
-    }
-
-    public Auction(int auctionId, boolean active, String title, BigDecimal price, int categoryID, String description, Person person) {
-        this.id = auctionId;
-        this.active = active;
-        this.title = title;
-        this.price = price;
-        this.categoryId = categoryID;
-        this.description = description;
-        this.person = person;
-    }
 
     public Integer getId() {
         return id;
@@ -91,12 +73,12 @@ public class Auction {
         this.price = price;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getDescription() {

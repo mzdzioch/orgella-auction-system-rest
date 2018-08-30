@@ -28,11 +28,11 @@ public class BidController {
 
         Optional<Auction> auction = auctionService.getAuction(bidDto.getAuctionId());
 
-        if(!auctionService.isBidHigher(auction.get(), bidDto.getBidPrice())){
+        if(!bidService.isBidHigher(auction.get(), bidDto.getBidPrice())){
             return new ResponseMessage<>(StatusResponse.LOW_BID, "Your bid is low than current price! Try again", null);
         }
 
-        Boolean isWinner = auctionService.tryMakeWinningBid(auction.get(), bidDto);
+        Boolean isWinner = bidService.tryMakeWinningBid(auction.get(), bidDto);
 
         if(isWinner){
             return new ResponseMessage<>(StatusResponse.OK, null, null);

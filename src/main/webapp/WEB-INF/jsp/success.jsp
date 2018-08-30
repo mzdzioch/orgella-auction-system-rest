@@ -82,7 +82,7 @@
 				<tr class="table-light">
 					<td scope="col">${auctionList.title}</td>
 					<td scope="col">${auctionList.price}</td>
-					<td scope="col">${auctionList.categoryId}</td>
+					<td scope="col">${auctionList.categoryName}</td>
 					<td scope="col">${auctionList.description}</td>
 					<td>
 						<a class="btn btn-primary" href="<c:url value='/${auctionList.id}/auctionview/'/>">Make a Bid</a>

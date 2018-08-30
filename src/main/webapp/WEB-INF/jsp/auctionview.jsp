@@ -86,7 +86,7 @@
 				</tr>
 				<tr>
 					<th scope="col">Category ID</th>
-					<td scope="col">${auction.categoryId}</td>
+					<td scope="col">${auction.categoryName}</td>
 				</tr>
 				<tr>
 					<th scope="col">Description</th>

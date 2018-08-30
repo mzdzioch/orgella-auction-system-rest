@@ -6,14 +6,14 @@ public class CreateAuctionDto {
 
     private String title;
     private BigDecimal price;
-    private int category;
+    private String category;   //TODO private String categoryName;
     private String description;
     private String login;
 
     public CreateAuctionDto() {
     }
 
-    public CreateAuctionDto(String title, BigDecimal price, int category, String description, String login) {
+    public CreateAuctionDto(String title, BigDecimal price, String category, String description, String login) {
         this.title = title;
         this.price = price;
         this.category = category;
@@ -37,11 +37,11 @@ public class CreateAuctionDto {
         this.price = price;
     }
 
-    public int getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(int category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 

@@ -16,6 +16,7 @@ public class PersonService implements IPersonService{
     @Autowired
     PersonRepository personRepository;
 
+    @Override
     public Person savePerson(Person person) {
 
         try {
@@ -28,10 +29,12 @@ public class PersonService implements IPersonService{
         return null;
     }
 
+    @Override
     public void deletePerson(Person person) {
         personRepository.delete(person);
     }
 
+    @Override
     public boolean isLoginAndPasswordCorrect(Person person) {
 
         Optional<Person> findPerson = findPersonByLogin(person.getLogin());
@@ -45,6 +48,7 @@ public class PersonService implements IPersonService{
         return false;
     }
 
+    @Override
     public Optional<Person> findPersonByLogin(String login) {
 
         return personRepository.findPersonByLogin(login);
